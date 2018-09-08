@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Book Inventory</string>
+    <string name="action_settings">Settings</string>
+
+   <!-- add dummy data via menu-->
+    <string name="insert_dummy_data">Insert Dummy Data</string>
+
+   <!-- editor options-->
+    <string name="update_add_book">Add a book</string>
+    <string name="update_save">Save</string>
+
+    <!--Books inventory data-->
+    <string name="hint_Book_Title">Book Title</string>
+    <string name="hint_Author">Author</string>
+    <string name="hint_Genre">Genre</string>
+    <string name="hint_Price">Price</string>
+    <string name="hint_Quantity">Quantity</string>
+    <string name="hint_Publisher_Name">Publisher Name</string>
+    <string name="hint_Publisher_Phone">Publisher Phone Number</string>
+
+    <!--Book genres-->
+    <string name="fiction">fiction</string>
+    <string name="biography">biography</string>
+    <string name="illustrated">illustrated</string>
+    <string name="eco_fable">eco-fable</string>
+    <string name="delete">Delete</string>
+    <string name="delete_all_entries">Delete ALL entries</string>
+</resources>
