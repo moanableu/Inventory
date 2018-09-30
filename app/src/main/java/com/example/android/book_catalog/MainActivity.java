@@ -7,21 +7,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.example.android.book_catalog.dataAccessObject.InventoryBdHelper;
-import com.example.android.book_catalog.dataAccessObject.InventoryContract;
+import com.example.android.book_catalog.dataAccessObject.InventoryDBHelper;
 
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.*;
 
 public class MainActivity extends AppCompatActivity {
+
+    private InventoryDBHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        mDbHelper = new InventoryDBHelper(this);
+        displayDb();
     }
 
     @Override
@@ -115,10 +117,11 @@ public class MainActivity extends AppCompatActivity {
         } finally {
             c.close();
         }
-
     }
 
     private void insertEntry() {
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(InventoryEntry.COLUMN_BOOK_TITLE, "El Ruisenor");
@@ -147,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             //noinspection SimplifiableIfStatement
             case R.id.insert_dummy_data:
                 insertEntry();
-                // displayDb();
+                displayDb();
                 return true;
             case R.id.delete_entries:
                 // method not implemented for the moment
