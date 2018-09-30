@@ -2,6 +2,7 @@ package com.example.android.book_catalog;
 
 import android.content.ContentValues;
 import android.content.UriMatcher;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.example.android.book_catalog.dataAccessObject.InventoryDBHelper;
 
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.*;
 
@@ -80,14 +83,20 @@ public class ManageInventoryActivity extends AppCompatActivity {
     private void insertBook(){
         String titleString = mEditTitle.getText().toString().trim();
         String authorString = mEditAuthor.getText().toString().trim();
+        String price = mEditPrice.getText().toString().trim();
+        String quantity = mEditQuantity.getText().toString().trim();
         String publisherString = mEditPublisher.getText().toString().trim();
         String phoneString = mEditPhone.getText().toString().trim();
 
-        // insert price and qty here
+        InventoryDBHelper mDbHelper = new InventoryDBHelper(this);
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
         cv.put(InventoryEntry.COLUMN_BOOK_TITLE, titleString);
         cv.put(InventoryEntry.COLUMN_AUTHOR, authorString);
+        cv.put(InventoryEntry.COLUMN_PRICE, price);
+        cv.put(InventoryEntry.COLUMN_QUANTITY, quantity);
         cv.put(InventoryEntry.COLUMN_PUBLISHER_NAME, publisherString);
         cv.put(InventoryEntry.COLUMN_PUBLISHER_PHONE, phoneString);
 

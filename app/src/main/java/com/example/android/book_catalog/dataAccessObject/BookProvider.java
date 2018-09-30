@@ -14,7 +14,7 @@ import android.util.Log;
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.*;
 
 public class BookProvider extends ContentProvider {
-    private InventoryBdHelper mDbHelper;
+    private InventoryDBHelper mDbHelper;
 
     public static final String LOG_TAG = BookProvider.class.getSimpleName();
 
@@ -36,7 +36,7 @@ public class BookProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        mDbHelper = new InventoryBdHelper(getContext());
+        mDbHelper = new InventoryDBHelper(getContext());
         return true;
     }
 
@@ -191,7 +191,7 @@ public class BookProvider extends ContentProvider {
             case BOOKS:
                 return db.delete(InventoryEntry.TABLE_NAME, selection, selectionArgs);
             case  BOOK_ID:
-                selection = InventoryEntry._ID + "+?";
+                selection = InventoryEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 return db.delete(InventoryEntry.TABLE_NAME,selection,selectionArgs);
             default:
