@@ -2,10 +2,10 @@
     <string name="app_name">Book Inventory</string>
     <string name="action_settings">Settings</string>
 
-   <!-- add dummy data via menu-->
+    <!-- add dummy data via menu-->
     <string name="insert_dummy_data">Insert Dummy Data</string>
 
-   <!-- editor options-->
+    <!-- editor options-->
     <string name="update_add_book">Add a book</string>
     <string name="update_save">Save</string>
 
@@ -24,5 +24,20 @@
     <string name="illustrated">illustrated</string>
     <string name="eco_fable">eco-fable</string>
     <string name="delete">Delete</string>
-    <string name="delete_all_entries">Delete ALL entries</string>
+    <string name="delete_all_entries">Delete ALL book entries</string>
+    <string name="unspecified_genre">Unspecified genre</string>
+    <string name="manage_act_new_book">Add a Book</string>
+    <string name="manage_act_edit_book">Edit Book</string>
+    <string name="manage_act_update_ok">Inventory updated</string>
+    <string name="manage_act_delete_entry_failed">Error deleting book information</string>
+    <string name="manage_act_delete_entry_ok">Book information deleted</string>
+    <string name="delete_book_warning">Please confirm that you want to delete this book. This action can not be undone</string>
+    <string name="unsaved_changes_warning">You are about to exit without saving your changes, all changes will be lost</string>
+    <string name="title">Title</string>
+    <string name="author">Author</string>
+    <string name="price">$ 0.0</string>
+    <string name="quantity">5</string>
+    <string name="publisher">Publisher</string>
+    <string name="phone">+1123-456-7890</string>
+    <string name="genre">Genre</string>
 </resources>

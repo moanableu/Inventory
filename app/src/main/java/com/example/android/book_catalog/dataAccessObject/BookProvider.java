@@ -11,7 +11,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import static com.example.android.book_catalog.dataAccessObject.InventoryContract.*;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.CONTENT_AUTHORITY;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.PATH_BOOKS;
 
 public class BookProvider extends ContentProvider {
     private InventoryDBHelper mDbHelper;
@@ -28,7 +30,7 @@ public class BookProvider extends ContentProvider {
 
     //initialize the class
     static {
-        // this Uri match enables a relation to ALL items in the Db
+        // enable a relation to ALL items in the Db
         sUriMatcher.addURI(CONTENT_AUTHORITY, PATH_BOOKS, BOOKS);
         // enable a relation to a single item in the Db
         sUriMatcher.addURI(CONTENT_AUTHORITY, PATH_BOOKS + "/#", BOOK_ID);
@@ -61,6 +63,8 @@ public class BookProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException(("Unknown URI " + uri));
         }
+        // set notification to update cursor if uri data changes
+        c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
     }
 
@@ -87,7 +91,7 @@ public class BookProvider extends ContentProvider {
             case BOOKS:
                 return insertBook(uri, values);
             default:
-                throw new IllegalArgumentException("Unposrted insertion for " + uri);
+                throw new IllegalArgumentException("Insertion not supported for " + uri);
         }
     }
 
@@ -126,6 +130,10 @@ public class BookProvider extends ContentProvider {
             Log.e(LOG_TAG, "Failed insertion at row " + uri);
             return null;
         }
+
+        // notify listeners of data change
+        getContext().getContentResolver().notifyChange(uri, null);
+
         return ContentUris.withAppendedId(uri, id);
     }
 
@@ -145,57 +153,69 @@ public class BookProvider extends ContentProvider {
     }
 
     private int updateBook(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        if (values.containsKey(InventoryEntry.COLUMN_BOOK_TITLE)){
+        if (values.containsKey(InventoryEntry.COLUMN_BOOK_TITLE)) {
             String title = values.getAsString(InventoryEntry.COLUMN_BOOK_TITLE);
-            if (title == null){
+            if (title == null) {
                 throw new IllegalArgumentException("A valid title is required");
             }
         }
 
-        if (values.containsKey(InventoryEntry.COLUMN_PRICE)){
+        if (values.containsKey(InventoryEntry.COLUMN_PRICE)) {
             Double price = values.getAsDouble(InventoryEntry.COLUMN_PRICE);
-            if (price == 0 || price < 0){
+            if (price == 0 || price < 0) {
                 throw new IllegalArgumentException("Please provide a price for this item");
             }
         }
 
-        if (values.containsKey(InventoryEntry.COLUMN_QUANTITY)){
+        if (values.containsKey(InventoryEntry.COLUMN_QUANTITY)) {
             Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
             if (quantity == null && quantity < 0) {
                 throw new IllegalArgumentException("Please select a valid quantity");
             }
         }
 
-        if (values.containsKey(InventoryEntry.COLUMN_PUBLISHER_NAME)){
+        if (values.containsKey(InventoryEntry.COLUMN_PUBLISHER_NAME)) {
             String publisher = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_NAME);
             if (publisher == null) {
                 throw new IllegalArgumentException("Book requires a publisher");
             }
         }
 
-        if (values.size() == 0){
+        if (values.size() == 0) {
             return 0;
         }
 
         // once all validations have passed get a hold of the writable db and update
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        return  db.update(InventoryEntry.TABLE_NAME, values, selection, selectionArgs);
+        int rowsUpdated = db.update(InventoryEntry.TABLE_NAME, values, selection, selectionArgs);
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        int rowsDeleted;
+
         final int match = sUriMatcher.match(uri);
-        switch (match){
+        switch (match) {
             case BOOKS:
                 return db.delete(InventoryEntry.TABLE_NAME, selection, selectionArgs);
-            case  BOOK_ID:
+            case BOOK_ID:
                 selection = InventoryEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                return db.delete(InventoryEntry.TABLE_NAME,selection,selectionArgs);
+                rowsDeleted = db.delete(InventoryEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Deletion not supported for " + uri);
         }
+
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDeleted;
     }
 }
