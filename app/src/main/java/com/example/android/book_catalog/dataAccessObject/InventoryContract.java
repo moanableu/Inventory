@@ -13,7 +13,8 @@ import static com.example.android.book_catalog.dataAccessObject.InventoryContrac
 public final class InventoryContract {
 
     // empty constructor to prevent contract instantiation
-    private InventoryContract(){}
+    private InventoryContract() {
+    }
 
     /**
      * create all the constants required for the ContentResolver - goal is to provide access to data
@@ -24,7 +25,7 @@ public final class InventoryContract {
 
     public static final String PATH_BOOKS = "books";
 
-    public static final class InventoryEntry implements BaseColumns{ //BaseColumns interface already implements column ID, no ID column is required here
+    public static final class InventoryEntry implements BaseColumns { //BaseColumns interface already implements column ID, no ID column is required here
 
         // enable access to the whole table
         public static final String CONTENT_LIST_TYPE =
@@ -58,9 +59,9 @@ public final class InventoryContract {
         public static final int GENRE_NON_FICTION = 4;
     }
 
-    public static boolean isValidGenre (int genre){
+    public static boolean isValidGenre(int genre) {
         if (genre == NOT_DEFINED || genre == GENRE_FICTION || genre == GENRE_BIOGRAPHY ||
-                genre == GENRE_ILLUSTRATED || genre == GENRE_NON_FICTION){
+                genre == GENRE_ILLUSTRATED || genre == GENRE_NON_FICTION) {
             return true;
         }
         return false;
