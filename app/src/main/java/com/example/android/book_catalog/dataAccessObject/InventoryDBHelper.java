@@ -12,7 +12,7 @@ public class InventoryDBHelper extends SQLiteOpenHelper {
     // database information:
     private static final String DATABASE_NAME = "inventory.db";
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 1;
 
     /**
      * Constructor that will instantiate the DB in the app context
@@ -33,13 +33,16 @@ public class InventoryDBHelper extends SQLiteOpenHelper {
                 + InventoryEntry.COLUMN_PRICE + " DOUBLE NOT NULL, "
                 + InventoryEntry.COLUMN_QUANTITY + " INTEGER NOT NULL DEFAULT 0, "
                 + InventoryEntry.COLUMN_PUBLISHER_NAME + " TEXT NOT NULL, "
-                + InventoryEntry.COLUMN_PUBLISHER_PHONE + " INTEGER NOT NULL );";
+                + InventoryEntry.COLUMN_PUBLISHER_PHONE + " LONG NOT NULL );";
 
         db.execSQL(SQL_CREATE_BOOKS_TABLE);
     }
 
+    private static final String SQL_DEL_BOOKS_TBL = "DROP TABLE IF EXISTS " + InventoryEntry.TABLE_NAME;
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // to be added
+        db.execSQL(SQL_DEL_BOOKS_TBL);
+        onCreate(db);
     }
 }

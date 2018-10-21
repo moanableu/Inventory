@@ -1,4 +1,4 @@
-package com.example.android.book_catalog;
+package com.example.android.book_catalog.AdapterUtils;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,9 +12,15 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.book_catalog.R;
+
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry;
 
 public class BookCursorAdapter extends CursorAdapter {
+    private Button saleButton;
+    private TextView titleTextView, priceTextView, qtyTextView;
+    private Uri entryUri;
+
     public BookCursorAdapter(Context context, Cursor c) {
         super(context, c);
     }
@@ -26,16 +32,18 @@ public class BookCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, final Context context, final Cursor cursor) {
-        Button saleButton = view.findViewById(R.id.sale_button);
+        saleButton = view.findViewById(R.id.sale_button);
 
-        TextView titleTextView = view.findViewById(R.id.title);
-        TextView priceTextView = view.findViewById(R.id.price);
-        final TextView qtyTextView = view.findViewById(R.id.quantity);
+        titleTextView = view.findViewById(R.id.book_title);
+        priceTextView = view.findViewById(R.id.book_price);
+        qtyTextView = view.findViewById(R.id.book_quantity);
 
+        // read data via cursor interface?
         int titleColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_BOOK_TITLE);
         double priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRICE);
         int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
 
+        // print data to screen
         String bookTitle = cursor.getString(titleColumnIndex);
         Double bookPrice = cursor.getDouble((int) priceColumnIndex);
         Integer bookQuantity = cursor.getInt(quantityColumnIndex);
@@ -43,13 +51,13 @@ public class BookCursorAdapter extends CursorAdapter {
         titleTextView.setText(bookTitle);
 
         if (bookPrice == 0) {
-            priceTextView.setText(context.getString(R.string.hint_Price));
+            priceTextView.setText(context.getString(R.string.label_Price));
         } else {
             priceTextView.setText(String.valueOf(bookPrice));
         }
 
         if (bookQuantity == 0) {
-            qtyTextView.setText(context.getString(R.string.quantity));
+            qtyTextView.setText(context.getString(R.string.hint_quantity));
             saleButton.setVisibility(View.INVISIBLE);
             saleButton.setEnabled(false);
         } else {
@@ -59,7 +67,7 @@ public class BookCursorAdapter extends CursorAdapter {
         }
 
         int currentId = cursor.getInt(cursor.getColumnIndex(InventoryEntry._ID));
-        final Uri entryUri = Uri.withAppendedPath(InventoryEntry.CONTENT_URI, Integer.toString(currentId));
+        entryUri = Uri.withAppendedPath(InventoryEntry.CONTENT_URI, Integer.toString(currentId));
 
         saleButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +85,4 @@ public class BookCursorAdapter extends CursorAdapter {
             }
         });
     }
-
-
 }

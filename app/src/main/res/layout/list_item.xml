@@ -7,20 +7,20 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/book_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/price"
+        android:id="@+id/book_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/quantity"
+        android:id="@+id/book_quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="number"
@@ -32,6 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sale"
+        android:focusable="false"
         android:textColor="@color/fontColor_charcoal" />
 
 </LinearLayout>

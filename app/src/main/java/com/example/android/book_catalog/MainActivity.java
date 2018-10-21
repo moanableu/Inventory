@@ -21,6 +21,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.android.book_catalog.AdapterUtils.BookCursorAdapter;
+
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry;
 
 public class MainActivity extends AppCompatActivity
@@ -49,9 +51,6 @@ public class MainActivity extends AppCompatActivity
         View emptyView = findViewById(R.id.empty_view);
         bookListView.setEmptyView(emptyView);
 
-        mCursorAdapter = new BookCursorAdapter(this, null);
-        bookListView.setAdapter(mCursorAdapter);
-
         bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView <?> parent, View view, int position, long id) {
@@ -63,6 +62,11 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        mCursorAdapter = new BookCursorAdapter(this, null);
+        bookListView.setAdapter(mCursorAdapter);
+
+        //Button saleButton = new BookCursorAdapter.SaleButton();
+
         getSupportLoaderManager().initLoader(LOADER, null, this);
     }
 
@@ -73,7 +77,7 @@ public class MainActivity extends AppCompatActivity
         values.put(InventoryEntry.COLUMN_BOOK_TITLE, "El Ruisenor");
         values.put(InventoryEntry.COLUMN_AUTHOR, "Leonardo Costa");
         values.put(InventoryEntry.COLUMN_GENRE, "Fiction");
-        values.put(InventoryEntry.COLUMN_PUBLISHER_PHONE, "593577218");
+        values.put(InventoryEntry.COLUMN_PUBLISHER_PHONE, "59357721845");
         values.put(InventoryEntry.COLUMN_PRICE, 9.15);
         values.put(InventoryEntry.COLUMN_QUANTITY, 2);
         values.put(InventoryEntry.COLUMN_PUBLISHER_NAME, "Ariel");
