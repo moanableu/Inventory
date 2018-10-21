@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
 
     <!-- add dummy data via menu-->
-    <string name="insert_dummy_data">Insert Dummy Data</string>
+    <string name="insert_dummy_data">Test application</string>
 
     <!-- editor options-->
     <string name="update_add_book">Add a book</string>
@@ -19,25 +19,31 @@
     <string name="hint_Publisher_Phone">Publisher Phone Number</string>
 
     <!--Book genres-->
-    <string name="fiction">fiction</string>
-    <string name="biography">biography</string>
-    <string name="illustrated">illustrated</string>
-    <string name="eco_fable">eco-fable</string>
+    <string name="fiction">Fiction</string>
+    <string name="biography">Biography</string>
+    <string name="illustrated">Illustrated</string>
+    <string name="non_fiction">Non fiction</string>
     <string name="delete">Delete</string>
     <string name="delete_all_entries">Delete ALL book entries</string>
     <string name="unspecified_genre">Unspecified genre</string>
     <string name="manage_act_new_book">Add a Book</string>
     <string name="manage_act_edit_book">Edit Book</string>
-    <string name="manage_act_update_ok">Inventory updated</string>
+    <string name="manage_act_update_ok">Book inventory updated</string>
     <string name="manage_act_delete_entry_failed">Error deleting book information</string>
+    <string name="manage_act_update_entry_failed">Error updating book information</string>
     <string name="manage_act_delete_entry_ok">Book information deleted</string>
-    <string name="delete_book_warning">Please confirm that you want to delete this book. This action can not be undone</string>
-    <string name="unsaved_changes_warning">You are about to exit without saving your changes, all changes will be lost</string>
+    <string name="manage_act_invalid_entry">Title, author and quantity \nare mandatory fields.\nPlease add a valid information</string>
+    <string name="delete_book_warning">Please confirm that you want to delete this book. \nThis action can not be undone</string>
+    <string name="unsaved_changes_warning">You are about to exit this window. \nAll changes will be lost</string>
     <string name="title">Title</string>
     <string name="author">Author</string>
     <string name="price">$ 0.0</string>
-    <string name="quantity">5</string>
+    <string name="quantity">0</string>
     <string name="publisher">Publisher</string>
-    <string name="phone">+1123-456-7890</string>
+    <string name="phone">+1 123-456-7890</string>
     <string name="genre">Genre</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep editing</string>
+    <string name="cancel">Cancel</string>
+    <string name="emtpy_view_text">Start adding items click on the plus sign at the bottom</string>
 </resources>
