@@ -13,6 +13,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -24,9 +25,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.example.android.book_catalog.AdapterUtils.ReusableMethods;
 
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry;
 
@@ -39,7 +43,13 @@ public class ManageInventoryActivity extends AppCompatActivity
 
     private EditText mEditTitle, mEditAuthor, mEditPrice, mEditQuantity, mEditPublisher, mEditPhone;
 
+    private Button increase, decrease;
+
+    private int quantity = 0;
+
     private Spinner mGenreSpinner;
+
+    private View mFabButton;
 
     /**
      * Book genre {@link InventoryEntry#GENRE_NOT_DEFINED}
@@ -61,6 +71,38 @@ public class ManageInventoryActivity extends AppCompatActivity
         }
     };
 
+    /**
+     * Listener decreased inventory
+     */
+    private View.OnClickListener decreaseListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            quantity = Integer.parseInt(mEditQuantity.getText().toString());
+            String stringValue;
+            if (quantity > 0) {
+                quantity -= 1;
+                stringValue = String.valueOf(quantity);
+                mEditQuantity.setText(stringValue);
+            } else {
+                Toast.makeText(ManageInventoryActivity.this, R.string.negative_inventory_warning, Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    /**
+     * Listener increased inventory
+     */
+    private View.OnClickListener increaseListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            quantity = Integer.parseInt(mEditQuantity.getText().toString());
+            String stringValue;
+            quantity += 1;
+            stringValue = String.valueOf(quantity);
+            mEditQuantity.setText(stringValue);
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,13 +121,16 @@ public class ManageInventoryActivity extends AppCompatActivity
             getSupportLoaderManager().initLoader(EXISTING_BOOK_LOADER, null, this);
         }
 
-        mEditTitle = findViewById(R.id.title);
-        mEditAuthor = findViewById(R.id.author);
-        mEditPrice = findViewById(R.id.price);
+        mEditTitle = findViewById(R.id.book_title);
+        mEditAuthor = findViewById(R.id.book_author);
+        mEditPrice = findViewById(R.id.book_price);
         mEditQuantity = findViewById(R.id.quantity);
         mEditPublisher = findViewById(R.id.publisher);
-        mEditPhone = findViewById(R.id.phone);
+        mEditPhone = findViewById(R.id.publisher_phone);
         mGenreSpinner = findViewById(R.id.spinner_genre);
+        increase = findViewById(R.id.increase_button);
+        decrease = findViewById(R.id.decrease_button);
+        mFabButton = findViewById(R.id.call_action);
 
         mEditTitle.setOnTouchListener(mTouchListener);
         mEditAuthor.setOnTouchListener(mTouchListener);
@@ -94,9 +139,12 @@ public class ManageInventoryActivity extends AppCompatActivity
         mEditPublisher.setOnTouchListener(mTouchListener);
         mEditPhone.setOnTouchListener(mTouchListener);
         mGenreSpinner.setOnTouchListener(mTouchListener);
+        increase.setOnClickListener(increaseListener);
+        decrease.setOnClickListener(decreaseListener);
 
         setupSpinner();
 
+        // could this be refactored into its own class?
         mEditPhone.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -106,6 +154,13 @@ public class ManageInventoryActivity extends AppCompatActivity
                     return true;
                 }
                 return false;
+            }
+        });
+
+        mFabButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ReusableMethods.callToOrder(ManageInventoryActivity.this, String.valueOf(mEditPhone));
             }
         });
     }
@@ -160,20 +215,6 @@ public class ManageInventoryActivity extends AppCompatActivity
             // on empty entry return to main
             return;
         }
-
-        // test OR empty data NOT WORKING
-        /*if (mCurrentBookUri == null && TextUtils.isEmpty(titleString) &&
-                TextUtils.isEmpty(authorString) || TextUtils.isEmpty(priceString) &&
-                TextUtils.isEmpty(quantity) || TextUtils.isEmpty(publisherString) ||
-                TextUtils.isEmpty(phoneString) || mGenre == InventoryEntry.GENRE_NOT_DEFINED) {
-            // show which entries are mandatory
-            Toast t = Toast.makeText(ManageInventoryActivity.this,
-                    R.string.manage_act_invalid_entry,
-                    Toast.LENGTH_LONG);
-            t.setGravity(Gravity.BOTTOM, 0, 260);
-            t.show();
-            return;
-        }*/
 
         ContentValues cv = new ContentValues();
         cv.put(InventoryEntry.COLUMN_BOOK_TITLE, titleString);
@@ -234,7 +275,7 @@ public class ManageInventoryActivity extends AppCompatActivity
                 finish();
                 return true;
             case R.id.menu_delete:
-                deleteConfirmationDialog();
+                ReusableMethods.deleteConfirmationDialog(this, mCurrentBookUri);
                 return true;
             case android.R.id.home:
                 if (!mBookUpdated) {
@@ -287,41 +328,6 @@ public class ManageInventoryActivity extends AppCompatActivity
 
         AlertDialog alertDialog = b.create();
         alertDialog.show();
-    }
-
-    private void deleteConfirmationDialog() {
-        AlertDialog.Builder b = new AlertDialog.Builder(this);
-        b.setMessage(R.string.delete_book_warning);
-        b.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteEntry();
-            }
-        });
-        b.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
-            }
-        });
-
-        AlertDialog alertDialog = b.create();
-        alertDialog.show();
-    }
-
-    private void deleteEntry() {
-        if (mCurrentBookUri != null) {
-            int rowsDeleted = getContentResolver().delete(mCurrentBookUri, null, null);
-            if (rowsDeleted == 0) {
-                Toast.makeText(this, R.string.manage_act_delete_entry_failed, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, R.string.manage_act_delete_entry_ok, Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        finish();
     }
 
 

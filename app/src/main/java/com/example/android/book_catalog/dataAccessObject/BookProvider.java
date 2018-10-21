@@ -11,6 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.android.book_catalog.AdapterUtils.ReusableMethods;
+
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.CONTENT_AUTHORITY;
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry;
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.PATH_BOOKS;
@@ -114,13 +116,18 @@ public class BookProvider extends ContentProvider {
         }
 
         Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
-        if (quantity == null && quantity < 0) {
+        if (quantity == null || quantity < 0) {
             throw new IllegalArgumentException("Please select a valid quantity");
         }
 
         String publisher = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_NAME);
         if (publisher == null) {
             throw new IllegalArgumentException("Book requires a publisher");
+        }
+
+        Long publisherPhone = values.getAsLong(InventoryEntry.COLUMN_PUBLISHER_PHONE);
+        if (publisherPhone == null || publisherPhone < 0){
+            throw new IllegalArgumentException("Book requires publisher phone number");
         }
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -178,6 +185,13 @@ public class BookProvider extends ContentProvider {
             String publisher = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_NAME);
             if (publisher == null) {
                 throw new IllegalArgumentException("Book requires a publisher");
+            }
+        }
+
+        if (values.containsKey(InventoryEntry.COLUMN_PUBLISHER_PHONE)){
+            Long publisherPhone = values.getAsLong(InventoryEntry.COLUMN_PUBLISHER_PHONE);
+            if (publisherPhone == null || publisherPhone < 0){
+                throw new IllegalArgumentException("Book requires publisher phone number");
             }
         }
 
