@@ -1,6 +1,7 @@
 package com.example.android.book_catalog;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,10 +16,12 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -36,9 +39,14 @@ public class ManageInventoryActivity extends AppCompatActivity
 
     private EditText mEditTitle, mEditAuthor, mEditPrice, mEditQuantity, mEditPublisher, mEditPhone;
 
-    private Spinner mEditGenre;
+    private Spinner mGenreSpinner;
 
-    private int mGenre = InventoryEntry.NOT_DEFINED;
+    /**
+     * Book genre {@link InventoryEntry#GENRE_NOT_DEFINED}
+     * {@link InventoryEntry#GENRE_FICTION}, {@link InventoryEntry#GENRE_BIOGRAPHY},
+     * {@link InventoryEntry#GENRE_ILLUSTRATED}, {@link InventoryEntry#GENRE_NON_FICTION}
+     */
+    private int mGenre = InventoryEntry.GENRE_NOT_DEFINED;
 
     private boolean mBookUpdated = false;
 
@@ -77,7 +85,7 @@ public class ManageInventoryActivity extends AppCompatActivity
         mEditQuantity = findViewById(R.id.quantity);
         mEditPublisher = findViewById(R.id.publisher);
         mEditPhone = findViewById(R.id.phone);
-        mEditGenre = findViewById(R.id.spinner_genre);
+        mGenreSpinner = findViewById(R.id.spinner_genre);
 
         mEditTitle.setOnTouchListener(mTouchListener);
         mEditAuthor.setOnTouchListener(mTouchListener);
@@ -85,9 +93,21 @@ public class ManageInventoryActivity extends AppCompatActivity
         mEditQuantity.setOnTouchListener(mTouchListener);
         mEditPublisher.setOnTouchListener(mTouchListener);
         mEditPhone.setOnTouchListener(mTouchListener);
-        mEditGenre.setOnTouchListener(mTouchListener);
+        mGenreSpinner.setOnTouchListener(mTouchListener);
 
         setupSpinner();
+
+        mEditPhone.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mEditPhone.getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void setupSpinner() {
@@ -97,54 +117,78 @@ public class ManageInventoryActivity extends AppCompatActivity
 
         genreSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
-        mEditGenre.setAdapter(genreSpinnerAdapter);
+        mGenreSpinner.setAdapter(genreSpinnerAdapter);
 
-        mEditGenre.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mGenreSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView <?> parent, View view, int position, long id) {
                 String selection = (String) parent.getItemAtPosition(position);
                 if (!TextUtils.isEmpty(selection)) {
-                    if (selection.equals(R.string.fiction)) {
+                    if (selection.equalsIgnoreCase(getString(R.string.fiction))) {
                         mGenre = InventoryEntry.GENRE_FICTION;
-                    } else if (selection.equals(R.string.biography)) {
+                    } else if (selection.equalsIgnoreCase(getString(R.string.biography))) {
                         mGenre = InventoryEntry.GENRE_BIOGRAPHY;
-                    } else if (selection.equals(R.string.illustrated)) {
+                    } else if (selection.equalsIgnoreCase(getString(R.string.illustrated))) {
                         mGenre = InventoryEntry.GENRE_ILLUSTRATED;
-                    } else if (selection.equals(R.string.fiction)) {
+                    } else if (selection.equalsIgnoreCase(getString(R.string.non_fiction))) {
                         mGenre = InventoryEntry.GENRE_NON_FICTION;
+                    } else {
+                        mGenre = InventoryEntry.GENRE_NOT_DEFINED;
                     }
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView <?> parent) {
-                mGenre = InventoryEntry.NOT_DEFINED;
+                mGenre = InventoryEntry.GENRE_NOT_DEFINED;
             }
         });
     }
 
-    private void insertBook() {
+    private void saveBook() {
         String titleString = mEditTitle.getText().toString().trim();
         String authorString = mEditAuthor.getText().toString().trim();
-        String price = mEditPrice.getText().toString().trim();
+        String priceString = mEditPrice.getText().toString().trim();
         String quantity = mEditQuantity.getText().toString().trim();
         String publisherString = mEditPublisher.getText().toString().trim();
         String phoneString = mEditPhone.getText().toString().trim();
 
         if (mCurrentBookUri == null && TextUtils.isEmpty(titleString) &&
-                TextUtils.isEmpty(authorString) && TextUtils.isEmpty(price) &&
+                TextUtils.isEmpty(authorString) && TextUtils.isEmpty(priceString) &&
                 TextUtils.isEmpty(quantity) && TextUtils.isEmpty(publisherString) &&
-                TextUtils.isEmpty(phoneString) && mGenre == InventoryEntry.NOT_DEFINED) {
+                TextUtils.isEmpty(phoneString) && mGenre == InventoryEntry.GENRE_NOT_DEFINED) {
+            // on empty entry return to main
             return;
         }
+
+        // test OR empty data NOT WORKING
+        /*if (mCurrentBookUri == null && TextUtils.isEmpty(titleString) &&
+                TextUtils.isEmpty(authorString) || TextUtils.isEmpty(priceString) &&
+                TextUtils.isEmpty(quantity) || TextUtils.isEmpty(publisherString) ||
+                TextUtils.isEmpty(phoneString) || mGenre == InventoryEntry.GENRE_NOT_DEFINED) {
+            // show which entries are mandatory
+            Toast t = Toast.makeText(ManageInventoryActivity.this,
+                    R.string.manage_act_invalid_entry,
+                    Toast.LENGTH_LONG);
+            t.setGravity(Gravity.BOTTOM, 0, 260);
+            t.show();
+            return;
+        }*/
 
         ContentValues cv = new ContentValues();
         cv.put(InventoryEntry.COLUMN_BOOK_TITLE, titleString);
         cv.put(InventoryEntry.COLUMN_AUTHOR, authorString);
-        cv.put(InventoryEntry.COLUMN_PRICE, price);
+        cv.put(InventoryEntry.COLUMN_GENRE, mGenre);
         cv.put(InventoryEntry.COLUMN_QUANTITY, quantity);
         cv.put(InventoryEntry.COLUMN_PUBLISHER_NAME, publisherString);
         cv.put(InventoryEntry.COLUMN_PUBLISHER_PHONE, phoneString);
+
+        // by default set price to 0 if not provided
+        double price = 0.0;
+        if (!TextUtils.isEmpty(priceString)) {
+            price = Double.parseDouble(priceString);
+        }
+        cv.put(InventoryEntry.COLUMN_PRICE, price);
 
         if (mCurrentBookUri == null) {
             Uri newUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, cv);
@@ -158,10 +202,10 @@ public class ManageInventoryActivity extends AppCompatActivity
             int rowsUpdated = getContentResolver().update(mCurrentBookUri,
                     cv, null, null);
             if (rowsUpdated == 0) {
-                Toast.makeText(this, R.string.manage_act_update_ok,
+                Toast.makeText(this, R.string.manage_act_update_entry_failed,
                         Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Entry updated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.manage_act_update_ok, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -186,7 +230,7 @@ public class ManageInventoryActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_save:
-                insertBook();
+                saveBook();
                 finish();
                 return true;
             case R.id.menu_delete:
@@ -231,8 +275,8 @@ public class ManageInventoryActivity extends AppCompatActivity
             (DialogInterface.OnClickListener discardButtonClickListener) {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setMessage(R.string.unsaved_changes_warning);
-        b.setPositiveButton("Discard", discardButtonClickListener);
-        b.setNegativeButton("Keep editing", new DialogInterface.OnClickListener() {
+        b.setPositiveButton(R.string.discard, discardButtonClickListener);
+        b.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (dialog != null) {
@@ -248,13 +292,13 @@ public class ManageInventoryActivity extends AppCompatActivity
     private void deleteConfirmationDialog() {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setMessage(R.string.delete_book_warning);
-        b.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+        b.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteEntry();
             }
         });
-        b.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        b.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (dialog != null) {
@@ -276,12 +320,13 @@ public class ManageInventoryActivity extends AppCompatActivity
                 Toast.makeText(this, R.string.manage_act_delete_entry_ok, Toast.LENGTH_SHORT).show();
             }
         }
+
+        finish();
     }
 
-    //TBC
-    @NonNull
+
     @Override
-    public Loader <Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+    public Loader <Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
                 InventoryEntry._ID,
                 InventoryEntry.COLUMN_BOOK_TITLE,
@@ -331,19 +376,19 @@ public class ManageInventoryActivity extends AppCompatActivity
 
             switch (genre) {
                 case InventoryEntry.GENRE_FICTION:
-                    mEditGenre.setSelection(1);
+                    mGenreSpinner.setSelection(1);
                     break;
                 case InventoryEntry.GENRE_BIOGRAPHY:
-                    mEditGenre.setSelection(2);
+                    mGenreSpinner.setSelection(2);
                     break;
                 case InventoryEntry.GENRE_ILLUSTRATED:
-                    mEditGenre.setSelection(3);
+                    mGenreSpinner.setSelection(3);
                     break;
                 case InventoryEntry.GENRE_NON_FICTION:
-                    mEditGenre.setSelection(4);
+                    mGenreSpinner.setSelection(4);
                     break;
                 default:
-                    mEditGenre.setSelection(0);
+                    mGenreSpinner.setSelection(0);
                     break;
             }
         }
@@ -353,7 +398,7 @@ public class ManageInventoryActivity extends AppCompatActivity
     public void onLoaderReset(@NonNull Loader <Cursor> loader) {
         mEditTitle.setText("");
         mEditAuthor.setText("");
-        mEditGenre.setSelection(0);
+        mGenreSpinner.setSelection(0);
         mEditPrice.setText("");
         mEditQuantity.setText("");
         mEditPublisher.setText("");

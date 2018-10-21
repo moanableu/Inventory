@@ -4,12 +4,6 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.GENRE_BIOGRAPHY;
-import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.GENRE_FICTION;
-import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.GENRE_ILLUSTRATED;
-import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.GENRE_NON_FICTION;
-import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.NOT_DEFINED;
-
 public final class InventoryContract {
 
     // empty constructor to prevent contract instantiation
@@ -25,7 +19,7 @@ public final class InventoryContract {
 
     public static final String PATH_BOOKS = "books";
 
-    public static final class InventoryEntry implements BaseColumns { //BaseColumns interface already implements column ID, no ID column is required here
+    public static final class InventoryEntry implements BaseColumns {
 
         // enable access to the whole table
         public static final String CONTENT_LIST_TYPE =
@@ -45,25 +39,34 @@ public final class InventoryContract {
         public static final String _ID = BaseColumns._ID;
         public final static String COLUMN_BOOK_TITLE = "book_title";
         public final static String COLUMN_AUTHOR = "author";
+
+        /**
+         * Book genre {@link InventoryEntry#GENRE_NOT_DEFINED}
+         * {@link InventoryEntry#GENRE_FICTION}, {@link InventoryEntry#GENRE_BIOGRAPHY},
+         * {@link InventoryEntry#GENRE_ILLUSTRATED}, {@link InventoryEntry#GENRE_NON_FICTION}
+         */
         public final static String COLUMN_GENRE = "genre";
+
         public final static String COLUMN_PRICE = "price";
         public final static String COLUMN_QUANTITY = "quantity";
         public final static String COLUMN_PUBLISHER_NAME = "publisher_name";
         public final static String COLUMN_PUBLISHER_PHONE = "publisher_phone";
 
+
         // genre available options
-        public static final int NOT_DEFINED = 0;
+        public static final int GENRE_NOT_DEFINED = 0;
         public static final int GENRE_FICTION = 1;
         public static final int GENRE_BIOGRAPHY = 2;
         public static final int GENRE_ILLUSTRATED = 3;
         public static final int GENRE_NON_FICTION = 4;
-    }
 
-    public static boolean isValidGenre(int genre) {
-        if (genre == NOT_DEFINED || genre == GENRE_FICTION || genre == GENRE_BIOGRAPHY ||
-                genre == GENRE_ILLUSTRATED || genre == GENRE_NON_FICTION) {
-            return true;
+
+        public static boolean isValidGenre(int genre) {
+            if (genre == GENRE_NOT_DEFINED || genre == GENRE_FICTION || genre == GENRE_BIOGRAPHY ||
+                    genre == GENRE_ILLUSTRATED || genre == GENRE_NON_FICTION) {
+                return true;
+            }
+            return false;
         }
-        return false;
     }
 }
