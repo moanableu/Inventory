@@ -29,8 +29,6 @@ public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks <Cursor> {
     public static final int LOADER = 0;
 
-    //private InventoryDBHelper mDbHelper;
-
     BookCursorAdapter mCursorAdapter;
 
     @Override
@@ -64,8 +62,6 @@ public class MainActivity extends AppCompatActivity
 
         mCursorAdapter = new BookCursorAdapter(this, null);
         bookListView.setAdapter(mCursorAdapter);
-
-        //Button saleButton = new BookCursorAdapter.SaleButton();
 
         getSupportLoaderManager().initLoader(LOADER, null, this);
     }

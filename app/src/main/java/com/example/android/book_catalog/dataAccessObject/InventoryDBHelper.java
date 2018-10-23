@@ -30,10 +30,10 @@ public class InventoryDBHelper extends SQLiteOpenHelper {
                 + InventoryEntry.COLUMN_BOOK_TITLE + " TEXT NOT NULL, "
                 + InventoryEntry.COLUMN_AUTHOR + " TEXT, "
                 + InventoryEntry.COLUMN_GENRE + " TEXT, "
-                + InventoryEntry.COLUMN_PRICE + " DOUBLE NOT NULL, "
+                + InventoryEntry.COLUMN_PRICE + " REAL NOT NULL, "
                 + InventoryEntry.COLUMN_QUANTITY + " INTEGER NOT NULL DEFAULT 0, "
                 + InventoryEntry.COLUMN_PUBLISHER_NAME + " TEXT NOT NULL, "
-                + InventoryEntry.COLUMN_PUBLISHER_PHONE + " LONG NOT NULL );";
+                + InventoryEntry.COLUMN_PUBLISHER_PHONE + " TEXT NOT NULL );";
 
         db.execSQL(SQL_CREATE_BOOKS_TABLE);
     }

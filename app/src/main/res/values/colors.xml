@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#45ada8</color>
     <color name="colorPrimaryDark">#547980</color>
-    <color name="colorAccent">#F8B195</color>
+    <color name="colorAccent">#FFF8B895</color> <!--FFF8B895  F8B195-->
 
     <color name="fontColor_charcoal">#594f4f</color>
 </resources>
