@@ -57,13 +57,6 @@ public class ReusableMethods {
         }
     }
 
-    public static void callToOrder(Context context, String publisherPhone) {
-        Intent i = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", publisherPhone, null));
-        if (i.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(i);
-        }
-    }
-
     public class InventoryOnKeyListener implements View.OnKeyListener {
 
         @Override

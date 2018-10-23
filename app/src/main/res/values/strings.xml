@@ -38,10 +38,10 @@
     <string name="manage_act_delete_entry_failed">Error deleting book information</string>
     <string name="manage_act_update_entry_failed">Error updating book information</string>
     <string name="manage_act_delete_entry_ok">Book information deleted</string>
-    <string name="manage_act_invalid_entry">Title, author and quantity \nare mandatory fields.\nPlease add a valid information</string>
     <string name="delete_book_warning">Please confirm that you want to delete this book. \nThis action can not be undone</string>
     <string name="unsaved_changes_warning">You are about to exit this window. \nAll changes will be lost</string>
     <string name="negative_inventory_warning">Inventory can not be lower than 0</string>
+    <string name="mandatory_fields_warning">Please add all mandatory fields \nAuthor, title and publisher phone \nare required.</string>
 
     <!--placeholder data-->
     <string name="hint_title">A Lion in Paris</string>

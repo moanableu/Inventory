@@ -107,27 +107,27 @@ public class BookProvider extends ContentProvider {
     private Uri insertBook(Uri uri, ContentValues values) {
         String title = values.getAsString(InventoryEntry.COLUMN_BOOK_TITLE);
         if (title == null) {
-            throw new IllegalArgumentException("A valid title is required");
+            return null;
         }
 
         Double price = values.getAsDouble(InventoryEntry.COLUMN_PRICE);
         if (price == 0 || price < 0) {
-            throw new IllegalArgumentException("Please provide a price for this item");
+            return null;
         }
 
         Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
         if (quantity == null || quantity < 0) {
-            throw new IllegalArgumentException("Please select a valid quantity");
+            return null;
         }
 
         String publisher = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_NAME);
         if (publisher == null) {
-            throw new IllegalArgumentException("Book requires a publisher");
+            return null;
         }
 
         Long publisherPhone = values.getAsLong(InventoryEntry.COLUMN_PUBLISHER_PHONE);
         if (publisherPhone == null || publisherPhone < 0){
-            throw new IllegalArgumentException("Book requires publisher phone number");
+            return null;
         }
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -189,8 +189,9 @@ public class BookProvider extends ContentProvider {
         }
 
         if (values.containsKey(InventoryEntry.COLUMN_PUBLISHER_PHONE)){
-            Long publisherPhone = values.getAsLong(InventoryEntry.COLUMN_PUBLISHER_PHONE);
-            if (publisherPhone == null || publisherPhone < 0){
+            String publisherPhone = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_PHONE);
+            //
+            if (publisherPhone == null || publisherPhone.isEmpty()){
                 throw new IllegalArgumentException("Book requires publisher phone number");
             }
         }

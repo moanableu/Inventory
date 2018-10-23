@@ -13,10 +13,10 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +42,8 @@ public class ManageInventoryActivity extends AppCompatActivity
     private Uri mCurrentBookUri;
 
     private EditText mEditTitle, mEditAuthor, mEditPrice, mEditQuantity, mEditPublisher, mEditPhone;
+
+    private String titleData, authorData, phoneData;
 
     private Button increase, decrease;
 
@@ -160,7 +162,12 @@ public class ManageInventoryActivity extends AppCompatActivity
         mFabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ReusableMethods.callToOrder(ManageInventoryActivity.this, String.valueOf(mEditPhone));
+                //almost works
+                String publisherPhone = mEditPublisher.getText().toString().trim();
+
+                Intent i = new Intent(Intent.ACTION_DIAL);
+                i.setData(Uri.parse("tel:" + publisherPhone));
+                startActivity(i);
             }
         });
     }
@@ -271,6 +278,7 @@ public class ManageInventoryActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_save:
+                containsMandatoryData();
                 saveBook();
                 finish();
                 return true;
@@ -294,6 +302,23 @@ public class ManageInventoryActivity extends AppCompatActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void containsMandatoryData() {
+        titleData = mEditTitle.getText().toString().trim();
+        authorData = mEditAuthor.getText().toString().trim();
+        phoneData = mEditPhone.getText().toString().trim();
+
+        if (TextUtils.isEmpty(titleData) || TextUtils.isEmpty(authorData) ||
+                TextUtils.isEmpty(phoneData)) {
+            mandatoryFieldsToast();
+        }
+    }
+
+    public void mandatoryFieldsToast(){
+        Toast toast = Toast.makeText(ManageInventoryActivity.this, R.string.mandatory_fields_warning, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.show();
     }
 
     @Override
