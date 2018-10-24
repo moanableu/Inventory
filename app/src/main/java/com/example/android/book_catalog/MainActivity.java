@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity
         getSupportLoaderManager().initLoader(LOADER, null, this);
     }
 
-
     private void insertEntry() {
         // dummy data insert for test purpose
         ContentValues values = new ContentValues();

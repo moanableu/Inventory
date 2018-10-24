@@ -11,8 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.example.android.book_catalog.AdapterUtils.ReusableMethods;
-
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.CONTENT_AUTHORITY;
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry;
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.PATH_BOOKS;
@@ -110,6 +108,11 @@ public class BookProvider extends ContentProvider {
             return null;
         }
 
+        String author = values.getAsString(InventoryEntry.COLUMN_AUTHOR);
+        if (author == null) {
+            return null;
+        }
+
         Double price = values.getAsDouble(InventoryEntry.COLUMN_PRICE);
         if (price == 0 || price < 0) {
             return null;
@@ -126,7 +129,7 @@ public class BookProvider extends ContentProvider {
         }
 
         Long publisherPhone = values.getAsLong(InventoryEntry.COLUMN_PUBLISHER_PHONE);
-        if (publisherPhone == null || publisherPhone < 0){
+        if (publisherPhone == null || publisherPhone < 0) {
             return null;
         }
 
@@ -163,36 +166,41 @@ public class BookProvider extends ContentProvider {
         if (values.containsKey(InventoryEntry.COLUMN_BOOK_TITLE)) {
             String title = values.getAsString(InventoryEntry.COLUMN_BOOK_TITLE);
             if (title == null) {
-                throw new IllegalArgumentException("A valid title is required");
+                return 0;
             }
+        }
+
+        String author = values.getAsString(InventoryEntry.COLUMN_AUTHOR);
+        if (author == null) {
+            return 0;
         }
 
         if (values.containsKey(InventoryEntry.COLUMN_PRICE)) {
             Double price = values.getAsDouble(InventoryEntry.COLUMN_PRICE);
             if (price == 0 || price < 0) {
-                throw new IllegalArgumentException("Please provide a price for this item");
+                return 0;
             }
         }
 
         if (values.containsKey(InventoryEntry.COLUMN_QUANTITY)) {
             Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
             if (quantity == null && quantity < 0) {
-                throw new IllegalArgumentException("Please select a valid quantity");
+                return 0;
             }
         }
 
         if (values.containsKey(InventoryEntry.COLUMN_PUBLISHER_NAME)) {
             String publisher = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_NAME);
             if (publisher == null) {
-                throw new IllegalArgumentException("Book requires a publisher");
+                return 0;
             }
         }
 
-        if (values.containsKey(InventoryEntry.COLUMN_PUBLISHER_PHONE)){
+        if (values.containsKey(InventoryEntry.COLUMN_PUBLISHER_PHONE)) {
             String publisherPhone = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_PHONE);
             //
-            if (publisherPhone == null || publisherPhone.isEmpty()){
-                throw new IllegalArgumentException("Book requires publisher phone number");
+            if (publisherPhone == null || publisherPhone.isEmpty()) {
+                return 0;
             }
         }
 
