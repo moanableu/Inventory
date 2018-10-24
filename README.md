@@ -13,4 +13,4 @@ An application that allows to keep inventory of items as well as calling supplie
 </ul>
 <p>Preview:
 
-![preview](/images/.jpg)
+![preview](images/inventory.jpg)
