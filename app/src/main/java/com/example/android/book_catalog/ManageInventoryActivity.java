@@ -31,17 +31,27 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.book_catalog.AdapterUtils.ReusableMethods;
+import com.santalu.widget.MaskEditText;
 
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry;
 
+/**
+ * Mask EditText resource: https://github.com/santalu/mask-edittext
+ * Inspired by Coding in Flow tutorial: https://www.youtube.com/watch?v=4bbF4I_ZaG4
+ */
+
 public class ManageInventoryActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks <Cursor> {
+
+    private static final String TAG = ManageInventoryActivity.class.getSimpleName();
 
     private static final int EXISTING_BOOK_LOADER = 0;
 
     private Uri mCurrentBookUri;
 
-    private EditText mEditTitle, mEditAuthor, mEditPrice, mEditQuantity, mEditPublisher, mEditPhone;
+    private EditText mEditTitle, mEditAuthor, mEditQuantity, mEditPublisher;
+
+    private MaskEditText mEditPrice, mEditPhone;
 
     private String titleData, authorData, phoneData;
 
@@ -146,7 +156,6 @@ public class ManageInventoryActivity extends AppCompatActivity
 
         setupSpinner();
 
-        // could this be refactored into its own class?
         mEditPhone.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -162,12 +171,13 @@ public class ManageInventoryActivity extends AppCompatActivity
         mFabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //almost works
-                String publisherPhone = mEditPublisher.getText().toString().trim();
+                String publisherPhone = String.format("tel:", mEditPublisher.getText().toString());
 
                 Intent i = new Intent(Intent.ACTION_DIAL);
-                i.setData(Uri.parse("tel:" + publisherPhone));
-                startActivity(i);
+                i.setData(Uri.parse(publisherPhone));
+                if (i.resolveActivity(getPackageManager()) != null) {
+                    startActivity(i);
+                }
             }
         });
     }
@@ -180,7 +190,6 @@ public class ManageInventoryActivity extends AppCompatActivity
         genreSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         mGenreSpinner.setAdapter(genreSpinnerAdapter);
-
         mGenreSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView <?> parent, View view, int position, long id) {
@@ -210,10 +219,10 @@ public class ManageInventoryActivity extends AppCompatActivity
     private void saveBook() {
         String titleString = mEditTitle.getText().toString().trim();
         String authorString = mEditAuthor.getText().toString().trim();
-        String priceString = mEditPrice.getText().toString().trim();
+        String priceString = mEditPrice.getRawText().toString().trim();
         String quantity = mEditQuantity.getText().toString().trim();
         String publisherString = mEditPublisher.getText().toString().trim();
-        String phoneString = mEditPhone.getText().toString().trim();
+        String phoneString = mEditPhone.getRawText().toString().trim();
 
         if (mCurrentBookUri == null && TextUtils.isEmpty(titleString) &&
                 TextUtils.isEmpty(authorString) && TextUtils.isEmpty(priceString) &&
@@ -304,7 +313,7 @@ public class ManageInventoryActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void containsMandatoryData() {
+   private void containsMandatoryData() {
         titleData = mEditTitle.getText().toString().trim();
         authorData = mEditAuthor.getText().toString().trim();
         phoneData = mEditPhone.getText().toString().trim();
@@ -315,7 +324,7 @@ public class ManageInventoryActivity extends AppCompatActivity
         }
     }
 
-    public void mandatoryFieldsToast(){
+    public void mandatoryFieldsToast() {
         Toast toast = Toast.makeText(ManageInventoryActivity.this, R.string.mandatory_fields_warning, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
         toast.show();
@@ -354,7 +363,6 @@ public class ManageInventoryActivity extends AppCompatActivity
         AlertDialog alertDialog = b.create();
         alertDialog.show();
     }
-
 
     @Override
     public Loader <Cursor> onCreateLoader(int id, Bundle args) {

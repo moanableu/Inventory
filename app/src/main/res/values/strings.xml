@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Book Inventory</string>
-    <!--<string name="action_settings">Settings</string>-->
 
     <!-- add dummy data via menu-->
     <string name="insert_dummy_data">Test application</string>
@@ -49,5 +48,5 @@
     <string name="hint_price">$ 19.95</string>
     <string name="hint_quantity">0</string>
     <string name="hint_publisher">Tate</string>
-    <string name="hint_phone">+1 123-456-7890</string>
+    <string name="hint_phone">+01(123) 456-7890</string>
 </resources>
