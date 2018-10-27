@@ -104,12 +104,12 @@ public class BookProvider extends ContentProvider {
      */
     private Uri insertBook(Uri uri, ContentValues values) {
         String title = values.getAsString(InventoryEntry.COLUMN_BOOK_TITLE);
-        if (title == null) {
+        if (title == null || title.isEmpty()) {
             return null;
         }
 
         String author = values.getAsString(InventoryEntry.COLUMN_AUTHOR);
-        if (author == null) {
+        if (author == null || author.isEmpty()) {
             return null;
         }
 
@@ -124,7 +124,7 @@ public class BookProvider extends ContentProvider {
         }
 
         String publisher = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_NAME);
-        if (publisher == null) {
+        if (publisher == null || publisher.isEmpty()) {
             return null;
         }
 
@@ -165,13 +165,13 @@ public class BookProvider extends ContentProvider {
     private int updateBook(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         if (values.containsKey(InventoryEntry.COLUMN_BOOK_TITLE)) {
             String title = values.getAsString(InventoryEntry.COLUMN_BOOK_TITLE);
-            if (title == null) {
+            if (title == null || title.isEmpty()) {
                 return 0;
             }
         }
 
         String author = values.getAsString(InventoryEntry.COLUMN_AUTHOR);
-        if (author == null) {
+        if (author == null || author.isEmpty()) {
             return 0;
         }
 
@@ -182,16 +182,17 @@ public class BookProvider extends ContentProvider {
             }
         }
 
+        // is this the only one being updated?
         if (values.containsKey(InventoryEntry.COLUMN_QUANTITY)) {
             Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
-            if (quantity == null && quantity < 0) {
+            if (quantity == null || quantity < 0) {
                 return 0;
             }
         }
 
         if (values.containsKey(InventoryEntry.COLUMN_PUBLISHER_NAME)) {
             String publisher = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_NAME);
-            if (publisher == null) {
+            if (publisher == null || publisher.isEmpty()) {
                 return 0;
             }
         }

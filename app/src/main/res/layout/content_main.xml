@@ -27,18 +27,6 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!--<EditText
-
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/book_title"
-            android:layout_marginEnd="@dimen/dimen_24dp"
-            android:hint="@string/hint_price"
-            android:inputType="numberDecimal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>-->
-
         <com.santalu.widget.MaskEditText
             android:id="@+id/book_price"
             style="@style/edit_text"
@@ -53,7 +41,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:met_mask="$ ##.##" />
+            app:met_mask="$ #.##" />
 
         <EditText
             android:id="@+id/book_author"
@@ -65,12 +53,12 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
-        <EditText
+        <TextView
             android:id="@+id/qty_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/book_author"
-            android:layout_marginLeft="@dimen/dimen_36dp"
+            android:layout_marginLeft="@dimen/dimen_40dp"
             android:text="@string/label_Quantity" />
 
         <Button

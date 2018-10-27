@@ -53,7 +53,7 @@ public class ManageInventoryActivity extends AppCompatActivity
 
     private MaskEditText mEditPrice, mEditPhone;
 
-    private String titleData, authorData, phoneData;
+    private String titleData, authorData, phoneData, priceData, quantityData, publisherData;
 
     private Button increase, decrease;
 
@@ -87,16 +87,20 @@ public class ManageInventoryActivity extends AppCompatActivity
      * Listener decreased inventory
      */
     private View.OnClickListener decreaseListener = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
-            quantity = Integer.parseInt(mEditQuantity.getText().toString());
-            String stringValue;
-            if (quantity > 0) {
-                quantity -= 1;
-                stringValue = String.valueOf(quantity);
-                mEditQuantity.setText(stringValue);
-            } else {
-                Toast.makeText(ManageInventoryActivity.this, R.string.negative_inventory_warning, Toast.LENGTH_SHORT).show();
+            if (mEditQuantity != null) {
+                quantity = Integer.parseInt(mEditQuantity.getText().toString());
+
+                String stringValue;
+                if (quantity > 0) {
+                    quantity -= 1;
+                    stringValue = String.valueOf(quantity);
+                    mEditQuantity.setText(stringValue);
+                } else {
+                    Toast.makeText(ManageInventoryActivity.this, R.string.negative_inventory_warning, Toast.LENGTH_SHORT).show();
+                }
             }
         }
     };
@@ -107,11 +111,13 @@ public class ManageInventoryActivity extends AppCompatActivity
     private View.OnClickListener increaseListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            quantity = Integer.parseInt(mEditQuantity.getText().toString());
-            String stringValue;
-            quantity += 1;
-            stringValue = String.valueOf(quantity);
-            mEditQuantity.setText(stringValue);
+            if (mEditQuantity != null) {
+                quantity = Integer.parseInt(mEditQuantity.getText().toString());
+                String stringValue;
+                quantity += 1;
+                stringValue = String.valueOf(quantity);
+                mEditQuantity.setText(stringValue);
+            }
         }
     };
 
@@ -171,7 +177,7 @@ public class ManageInventoryActivity extends AppCompatActivity
         mFabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String publisherPhone = String.format("tel:", mEditPublisher.getText().toString());
+                String publisherPhone = String.format("tel:", mEditPhone.getText().toString());
 
                 Intent i = new Intent(Intent.ACTION_DIAL);
                 i.setData(Uri.parse(publisherPhone));
@@ -219,10 +225,10 @@ public class ManageInventoryActivity extends AppCompatActivity
     private void saveBook() {
         String titleString = mEditTitle.getText().toString().trim();
         String authorString = mEditAuthor.getText().toString().trim();
-        String priceString = mEditPrice.getRawText().toString().trim();
+        String priceString = mEditPrice.getRawText();
         String quantity = mEditQuantity.getText().toString().trim();
         String publisherString = mEditPublisher.getText().toString().trim();
-        String phoneString = mEditPhone.getRawText().toString().trim();
+        String phoneString = mEditPhone.getRawText();
 
         if (mCurrentBookUri == null && TextUtils.isEmpty(titleString) &&
                 TextUtils.isEmpty(authorString) && TextUtils.isEmpty(priceString) &&
@@ -241,7 +247,7 @@ public class ManageInventoryActivity extends AppCompatActivity
         cv.put(InventoryEntry.COLUMN_PUBLISHER_PHONE, phoneString);
 
         // by default set price to 0 if not provided
-        double price = 0.0;
+        double price = 00.00;
         if (!TextUtils.isEmpty(priceString)) {
             price = Double.parseDouble(priceString);
         }
@@ -313,13 +319,16 @@ public class ManageInventoryActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-   private void containsMandatoryData() {
+    private void containsMandatoryData() {
         titleData = mEditTitle.getText().toString().trim();
         authorData = mEditAuthor.getText().toString().trim();
-        phoneData = mEditPhone.getText().toString().trim();
+        priceData = mEditPrice.getRawText();
+        quantityData = mEditQuantity.getText().toString().trim();
+        publisherData = mEditPublisher.getText().toString().trim();
+        phoneData = mEditPhone.getRawText();
 
-        if (TextUtils.isEmpty(titleData) || TextUtils.isEmpty(authorData) ||
-                TextUtils.isEmpty(phoneData)) {
+        if (TextUtils.isEmpty(titleData) || TextUtils.isEmpty(authorData) || TextUtils.isEmpty(priceData) ||
+                TextUtils.isEmpty(quantityData) || TextUtils.isEmpty(publisherData) || TextUtils.isEmpty(phoneData)) {
             mandatoryFieldsToast();
         }
     }

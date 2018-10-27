@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.example.android.book_catalog.R;
 
+import java.text.NumberFormat;
+
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry;
 
 public class BookCursorAdapter extends CursorAdapter {
@@ -54,6 +56,9 @@ public class BookCursorAdapter extends CursorAdapter {
             priceTextView.setText(context.getString(R.string.label_Price));
         } else {
             priceTextView.setText(String.valueOf(bookPrice));
+            NumberFormat priceNumber = NumberFormat.getInstance();
+            priceNumber.setMinimumFractionDigits(2);
+            priceNumber.setMaximumFractionDigits(2);
         }
 
         if (bookQuantity == 0) {

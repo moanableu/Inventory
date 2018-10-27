@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity
         values.put(InventoryEntry.COLUMN_BOOK_TITLE, "El Ruisenor");
         values.put(InventoryEntry.COLUMN_AUTHOR, "Leonardo Costa");
         values.put(InventoryEntry.COLUMN_GENRE, "Fiction");
-        values.put(InventoryEntry.COLUMN_PUBLISHER_PHONE, "59357721845");
-        values.put(InventoryEntry.COLUMN_PRICE, 9.15);
+        values.put(InventoryEntry.COLUMN_PUBLISHER_PHONE, "+59357721845");
+        values.put(InventoryEntry.COLUMN_PRICE, 09.15);
         values.put(InventoryEntry.COLUMN_QUANTITY, 2);
         values.put(InventoryEntry.COLUMN_PUBLISHER_NAME, "Ariel");
 
