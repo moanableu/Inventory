@@ -1,5 +1,6 @@
 package com.example.android.book_catalog.AdapterUtils;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.book_catalog.R;
+import com.example.android.book_catalog.dataAccessObject.InventoryContract;
 
 import java.text.NumberFormat;
 
@@ -34,6 +36,7 @@ public class BookCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, final Context context, final Cursor cursor) {
+
         saleButton = view.findViewById(R.id.sale_button);
 
         titleTextView = view.findViewById(R.id.book_title);
@@ -56,9 +59,6 @@ public class BookCursorAdapter extends CursorAdapter {
             priceTextView.setText(context.getString(R.string.label_Price));
         } else {
             priceTextView.setText(String.valueOf(bookPrice));
-            NumberFormat priceNumber = NumberFormat.getInstance();
-            priceNumber.setMinimumFractionDigits(2);
-            priceNumber.setMaximumFractionDigits(2);
         }
 
         if (bookQuantity == 0) {
@@ -71,7 +71,7 @@ public class BookCursorAdapter extends CursorAdapter {
             saleButton.setEnabled(true);
         }
 
-        int currentId = cursor.getInt(cursor.getColumnIndex(InventoryEntry._ID));
+        final int currentId = cursor.getInt(cursor.getColumnIndex(InventoryEntry._ID));
         entryUri = Uri.withAppendedPath(InventoryEntry.CONTENT_URI, Integer.toString(currentId));
 
         saleButton.setOnClickListener(new View.OnClickListener() {

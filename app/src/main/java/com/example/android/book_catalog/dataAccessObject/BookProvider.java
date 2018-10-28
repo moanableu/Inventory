@@ -165,34 +165,33 @@ public class BookProvider extends ContentProvider {
     private int updateBook(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         if (values.containsKey(InventoryEntry.COLUMN_BOOK_TITLE)) {
             String title = values.getAsString(InventoryEntry.COLUMN_BOOK_TITLE);
-            if (title == null || title.isEmpty()) {
+            if (title == null) {
                 return 0;
             }
         }
 
         String author = values.getAsString(InventoryEntry.COLUMN_AUTHOR);
-        if (author == null || author.isEmpty()) {
+        if (author == null) {
             return 0;
         }
 
         if (values.containsKey(InventoryEntry.COLUMN_PRICE)) {
             Double price = values.getAsDouble(InventoryEntry.COLUMN_PRICE);
-            if (price == 0 || price < 0) {
+            if (price == 0 || price == null) {
                 return 0;
             }
         }
 
-        // is this the only one being updated?
         if (values.containsKey(InventoryEntry.COLUMN_QUANTITY)) {
             Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
-            if (quantity == null || quantity < 0) {
+            if (quantity == null || quantity == 0) {
                 return 0;
             }
         }
 
         if (values.containsKey(InventoryEntry.COLUMN_PUBLISHER_NAME)) {
             String publisher = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_NAME);
-            if (publisher == null || publisher.isEmpty()) {
+            if (publisher == null) {
                 return 0;
             }
         }
