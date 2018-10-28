@@ -90,17 +90,15 @@ public class ManageInventoryActivity extends AppCompatActivity
 
         @Override
         public void onClick(View v) {
-            if (mEditQuantity != null) {
-                quantity = Integer.parseInt(mEditQuantity.getText().toString());
+            quantity = Integer.parseInt(mEditQuantity.getText().toString());
 
-                String stringValue;
-                if (quantity > 0) {
-                    quantity -= 1;
-                    stringValue = String.valueOf(quantity);
-                    mEditQuantity.setText(stringValue);
-                } else {
-                    Toast.makeText(ManageInventoryActivity.this, R.string.negative_inventory_warning, Toast.LENGTH_SHORT).show();
-                }
+            String stringValue;
+            if (quantity > 0) {
+                quantity -= 1;
+                stringValue = String.valueOf(quantity);
+                mEditQuantity.setText(stringValue);
+            } else {
+                Toast.makeText(ManageInventoryActivity.this, R.string.negative_inventory_warning, Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -111,13 +109,11 @@ public class ManageInventoryActivity extends AppCompatActivity
     private View.OnClickListener increaseListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (mEditQuantity != null) {
-                quantity = Integer.parseInt(mEditQuantity.getText().toString());
-                String stringValue;
-                quantity += 1;
-                stringValue = String.valueOf(quantity);
-                mEditQuantity.setText(stringValue);
-            }
+            quantity = Integer.parseInt(mEditQuantity.getText().toString());
+            String stringValue;
+            quantity += 1;
+            stringValue = String.valueOf(quantity);
+            mEditQuantity.setText(stringValue);
         }
     };
 
