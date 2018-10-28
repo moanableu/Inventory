@@ -33,7 +33,7 @@ public class InventoryDBHelper extends SQLiteOpenHelper {
                 + InventoryEntry.COLUMN_PRICE + " REAL NOT NULL DEFAULT 00.00, "
                 + InventoryEntry.COLUMN_QUANTITY + " INTEGER NOT NULL DEFAULT 0, "
                 + InventoryEntry.COLUMN_PUBLISHER_NAME + " TEXT NOT NULL, "
-                + InventoryEntry.COLUMN_PUBLISHER_PHONE + " TEXT NOT NULL );";
+                + InventoryEntry.COLUMN_PUBLISHER_PHONE + " LONG NOT NULL );";
 
         db.execSQL(SQL_CREATE_BOOKS_TABLE);
     }

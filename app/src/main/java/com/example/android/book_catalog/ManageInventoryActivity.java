@@ -34,6 +34,7 @@ import com.example.android.book_catalog.AdapterUtils.ReusableMethods;
 import com.santalu.widget.MaskEditText;
 
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.*;
 
 /**
  * Mask EditText resource: https://github.com/santalu/mask-edittext
@@ -68,7 +69,7 @@ public class ManageInventoryActivity extends AppCompatActivity
      * {@link InventoryEntry#GENRE_FICTION}, {@link InventoryEntry#GENRE_BIOGRAPHY},
      * {@link InventoryEntry#GENRE_ILLUSTRATED}, {@link InventoryEntry#GENRE_NON_FICTION}
      */
-    private int mGenre = InventoryEntry.GENRE_NOT_DEFINED;
+    private int mGenre = GENRE_NOT_DEFINED;
 
     private boolean mBookUpdated = false;
 
@@ -198,22 +199,22 @@ public class ManageInventoryActivity extends AppCompatActivity
                 String selection = (String) parent.getItemAtPosition(position);
                 if (!TextUtils.isEmpty(selection)) {
                     if (selection.equalsIgnoreCase(getString(R.string.fiction))) {
-                        mGenre = InventoryEntry.GENRE_FICTION;
+                        mGenre = GENRE_FICTION;
                     } else if (selection.equalsIgnoreCase(getString(R.string.biography))) {
-                        mGenre = InventoryEntry.GENRE_BIOGRAPHY;
+                        mGenre = GENRE_BIOGRAPHY;
                     } else if (selection.equalsIgnoreCase(getString(R.string.illustrated))) {
-                        mGenre = InventoryEntry.GENRE_ILLUSTRATED;
+                        mGenre = GENRE_ILLUSTRATED;
                     } else if (selection.equalsIgnoreCase(getString(R.string.non_fiction))) {
-                        mGenre = InventoryEntry.GENRE_NON_FICTION;
+                        mGenre = GENRE_NON_FICTION;
                     } else {
-                        mGenre = InventoryEntry.GENRE_NOT_DEFINED;
+                        mGenre = GENRE_NOT_DEFINED;
                     }
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView <?> parent) {
-                mGenre = InventoryEntry.GENRE_NOT_DEFINED;
+                mGenre = GENRE_NOT_DEFINED;
             }
         });
     }
@@ -229,28 +230,30 @@ public class ManageInventoryActivity extends AppCompatActivity
         if (mCurrentBookUri == null && TextUtils.isEmpty(titleString) &&
                 TextUtils.isEmpty(authorString) && TextUtils.isEmpty(priceString) &&
                 TextUtils.isEmpty(quantity) && TextUtils.isEmpty(publisherString) &&
-                TextUtils.isEmpty(phoneString) && mGenre == InventoryEntry.GENRE_NOT_DEFINED) {
+                TextUtils.isEmpty(phoneString) && mGenre == GENRE_NOT_DEFINED) {
             // on empty entry return to main
             return;
         }
 
         ContentValues cv = new ContentValues();
-        cv.put(InventoryEntry.COLUMN_BOOK_TITLE, titleString);
-        cv.put(InventoryEntry.COLUMN_AUTHOR, authorString);
-        cv.put(InventoryEntry.COLUMN_GENRE, mGenre);
-        cv.put(InventoryEntry.COLUMN_QUANTITY, quantity);
-        cv.put(InventoryEntry.COLUMN_PUBLISHER_NAME, publisherString);
-        cv.put(InventoryEntry.COLUMN_PUBLISHER_PHONE, phoneString);
+        cv.put(COLUMN_BOOK_TITLE, titleString);
+        cv.put(COLUMN_AUTHOR, authorString);
+        cv.put(COLUMN_GENRE, mGenre);
+        cv.put(COLUMN_QUANTITY, quantity);
+        cv.put(COLUMN_PUBLISHER_NAME, publisherString);
+
+        long phone = Long.parseLong(phoneString);
+        cv.put(COLUMN_PUBLISHER_PHONE, phone);
 
         // by default set price to 0 if not provided
         double price = 00.00;
         if (!TextUtils.isEmpty(priceString)) {
             price = Double.parseDouble(priceString);
         }
-        cv.put(InventoryEntry.COLUMN_PRICE, price);
+        cv.put(COLUMN_PRICE, price);
 
         if (mCurrentBookUri == null) {
-            Uri newUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, cv);
+            Uri newUri = getContentResolver().insert(CONTENT_URI, cv);
 
             if (newUri == null) {
                 Toast.makeText(this, "Error saving book", Toast.LENGTH_SHORT).show();
@@ -372,14 +375,14 @@ public class ManageInventoryActivity extends AppCompatActivity
     @Override
     public Loader <Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
-                InventoryEntry._ID,
-                InventoryEntry.COLUMN_BOOK_TITLE,
-                InventoryEntry.COLUMN_AUTHOR,
-                InventoryEntry.COLUMN_GENRE,
-                InventoryEntry.COLUMN_PRICE,
-                InventoryEntry.COLUMN_QUANTITY,
-                InventoryEntry.COLUMN_PUBLISHER_NAME,
-                InventoryEntry.COLUMN_PUBLISHER_PHONE};
+                _ID,
+                COLUMN_BOOK_TITLE,
+                COLUMN_AUTHOR,
+                COLUMN_GENRE,
+                COLUMN_PRICE,
+                COLUMN_QUANTITY,
+                COLUMN_PUBLISHER_NAME,
+                COLUMN_PUBLISHER_PHONE};
         return new CursorLoader(this,
                 mCurrentBookUri,
                 projection,
@@ -395,13 +398,13 @@ public class ManageInventoryActivity extends AppCompatActivity
         }
 
         if (data.moveToFirst()) {
-            int titleIndex = data.getColumnIndex(InventoryEntry.COLUMN_BOOK_TITLE);
-            int authorIndex = data.getColumnIndex(InventoryEntry.COLUMN_AUTHOR);
-            int genreIndex = data.getColumnIndex(InventoryEntry.COLUMN_GENRE);
-            int priceIndex = data.getColumnIndex(InventoryEntry.COLUMN_PRICE);
-            int quantityIndex = data.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
-            int publisherIndex = data.getColumnIndex(InventoryEntry.COLUMN_PUBLISHER_NAME);
-            int publisherPhoneIndex = data.getColumnIndex(InventoryEntry.COLUMN_PUBLISHER_PHONE);
+            int titleIndex = data.getColumnIndex(COLUMN_BOOK_TITLE);
+            int authorIndex = data.getColumnIndex(COLUMN_AUTHOR);
+            int genreIndex = data.getColumnIndex(COLUMN_GENRE);
+            int priceIndex = data.getColumnIndex(COLUMN_PRICE);
+            int quantityIndex = data.getColumnIndex(COLUMN_QUANTITY);
+            int publisherIndex = data.getColumnIndex(COLUMN_PUBLISHER_NAME);
+            int publisherPhoneIndex = data.getColumnIndex(COLUMN_PUBLISHER_PHONE);
 
             String title = data.getString(titleIndex);
             String author = data.getString(authorIndex);
@@ -409,26 +412,26 @@ public class ManageInventoryActivity extends AppCompatActivity
             double price = data.getDouble(priceIndex);
             int quantity = data.getInt(quantityIndex);
             String publisher = data.getString(publisherIndex);
-            int publisherPhone = data.getInt(publisherPhoneIndex);
+            long publisherPhone = data.getInt(publisherPhoneIndex);
 
             mEditTitle.setText(title);
             mEditAuthor.setText(author);
             mEditPrice.setText(Double.toString(price));
             mEditQuantity.setText(Integer.toString(quantity));
             mEditPublisher.setText(publisher);
-            mEditPhone.setText(Integer.toString(publisherPhone));
+            mEditPhone.setText(Long.toString(publisherPhone));
 
             switch (genre) {
-                case InventoryEntry.GENRE_FICTION:
+                case GENRE_FICTION:
                     mGenreSpinner.setSelection(1);
                     break;
-                case InventoryEntry.GENRE_BIOGRAPHY:
+                case GENRE_BIOGRAPHY:
                     mGenreSpinner.setSelection(2);
                     break;
-                case InventoryEntry.GENRE_ILLUSTRATED:
+                case GENRE_ILLUSTRATED:
                     mGenreSpinner.setSelection(3);
                     break;
-                case InventoryEntry.GENRE_NON_FICTION:
+                case GENRE_NON_FICTION:
                     mGenreSpinner.setSelection(4);
                     break;
                 default:
