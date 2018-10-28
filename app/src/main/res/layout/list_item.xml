@@ -20,7 +20,7 @@
         android:inputType="numberDecimal"
         android:focusable="false"
         android:textSize="14sp"
-        app:met_mask="$ ##.##" />
+        app:met_mask="$ #.##" />
 
     <TextView
         android:id="@+id/book_quantity"

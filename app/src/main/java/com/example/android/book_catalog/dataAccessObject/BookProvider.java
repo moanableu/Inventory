@@ -104,17 +104,17 @@ public class BookProvider extends ContentProvider {
      */
     private Uri insertBook(Uri uri, ContentValues values) {
         String title = values.getAsString(InventoryEntry.COLUMN_BOOK_TITLE);
-        if (title == null || title.isEmpty()) {
+        if (title == null) {
             return null;
         }
 
         String author = values.getAsString(InventoryEntry.COLUMN_AUTHOR);
-        if (author == null || author.isEmpty()) {
+        if (author == null) {
             return null;
         }
 
         Double price = values.getAsDouble(InventoryEntry.COLUMN_PRICE);
-        if (price == 0 || price < 0) {
+        if (price == null || price < 0) {
             return null;
         }
 
@@ -124,7 +124,7 @@ public class BookProvider extends ContentProvider {
         }
 
         String publisher = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_NAME);
-        if (publisher == null || publisher.isEmpty()) {
+        if (publisher == null) {
             return null;
         }
 
@@ -170,21 +170,23 @@ public class BookProvider extends ContentProvider {
             }
         }
 
-        String author = values.getAsString(InventoryEntry.COLUMN_AUTHOR);
-        if (author == null) {
-            return 0;
+        if (values.containsKey(InventoryEntry.COLUMN_AUTHOR)) {
+            String author = values.getAsString(InventoryEntry.COLUMN_AUTHOR);
+            if (author == null) {
+                return 0;
+            }
         }
 
         if (values.containsKey(InventoryEntry.COLUMN_PRICE)) {
             Double price = values.getAsDouble(InventoryEntry.COLUMN_PRICE);
-            if (price == 0 || price == null) {
+            if (price == null || price < 0) {
                 return 0;
             }
         }
 
         if (values.containsKey(InventoryEntry.COLUMN_QUANTITY)) {
             Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
-            if (quantity == null || quantity == 0) {
+            if (quantity == null || quantity < 0) {
                 return 0;
             }
         }
@@ -197,9 +199,9 @@ public class BookProvider extends ContentProvider {
         }
 
         if (values.containsKey(InventoryEntry.COLUMN_PUBLISHER_PHONE)) {
-            String publisherPhone = values.getAsString(InventoryEntry.COLUMN_PUBLISHER_PHONE);
+            Long publisherPhone = values.getAsLong(InventoryEntry.COLUMN_PUBLISHER_PHONE);
             //
-            if (publisherPhone == null || publisherPhone.isEmpty()) {
+            if (publisherPhone == null || publisherPhone == 0) {
                 return 0;
             }
         }
