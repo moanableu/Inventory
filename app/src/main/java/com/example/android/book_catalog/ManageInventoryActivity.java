@@ -34,7 +34,20 @@ import com.example.android.book_catalog.AdapterUtils.ReusableMethods;
 import com.santalu.widget.MaskEditText;
 
 import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry;
-import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.*;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.COLUMN_AUTHOR;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.COLUMN_BOOK_TITLE;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.COLUMN_GENRE;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.COLUMN_PRICE;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.COLUMN_PUBLISHER_NAME;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.COLUMN_PUBLISHER_PHONE;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.COLUMN_QUANTITY;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.CONTENT_URI;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.GENRE_BIOGRAPHY;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.GENRE_FICTION;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.GENRE_ILLUSTRATED;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.GENRE_NON_FICTION;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry.GENRE_NOT_DEFINED;
+import static com.example.android.book_catalog.dataAccessObject.InventoryContract.InventoryEntry._ID;
 
 /**
  * Mask EditText resource: https://github.com/santalu/mask-edittext
@@ -91,15 +104,13 @@ public class ManageInventoryActivity extends AppCompatActivity
 
         @Override
         public void onClick(View v) {
-            quantity = Integer.parseInt(mEditQuantity.getText().toString());
-
-            String stringValue;
-            if (quantity > 0) {
-                quantity -= 1;
-                stringValue = String.valueOf(quantity);
-                mEditQuantity.setText(stringValue);
-            } else {
+            String qty = mEditQuantity.getText().toString();
+            if (qty.isEmpty() || quantity == 0) {
                 Toast.makeText(ManageInventoryActivity.this, R.string.negative_inventory_warning, Toast.LENGTH_SHORT).show();
+            } else {
+                quantity -= 1;
+                qty = String.valueOf(quantity);
+                mEditQuantity.setText(qty);
             }
         }
     };
@@ -110,11 +121,12 @@ public class ManageInventoryActivity extends AppCompatActivity
     private View.OnClickListener increaseListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            quantity = Integer.parseInt(mEditQuantity.getText().toString());
-            String stringValue;
-            quantity += 1;
-            stringValue = String.valueOf(quantity);
-            mEditQuantity.setText(stringValue);
+            String qty = mEditQuantity.getText().toString();
+            if (qty.isEmpty() || quantity >= 0) {
+                quantity += 1;
+                qty = String.valueOf(quantity);
+                mEditQuantity.setText(qty);
+            }
         }
     };
 
@@ -174,10 +186,10 @@ public class ManageInventoryActivity extends AppCompatActivity
         mFabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String publisherPhone = String.format("tel:", mEditPhone.getText().toString());
-
                 Intent i = new Intent(Intent.ACTION_DIAL);
-                i.setData(Uri.parse(publisherPhone));
+                String phone = mEditPhone.getRawText();
+
+                i.setData(Uri.parse("tel:" + phone));
                 if (i.resolveActivity(getPackageManager()) != null) {
                     startActivity(i);
                 }
@@ -223,52 +235,68 @@ public class ManageInventoryActivity extends AppCompatActivity
         String titleString = mEditTitle.getText().toString().trim();
         String authorString = mEditAuthor.getText().toString().trim();
         String priceString = mEditPrice.getRawText();
-        String quantity = mEditQuantity.getText().toString().trim();
+        String quantityString = mEditQuantity.getText().toString().trim();
         String publisherString = mEditPublisher.getText().toString().trim();
         String phoneString = mEditPhone.getRawText();
 
         if (mCurrentBookUri == null && TextUtils.isEmpty(titleString) &&
                 TextUtils.isEmpty(authorString) && TextUtils.isEmpty(priceString) &&
-                TextUtils.isEmpty(quantity) && TextUtils.isEmpty(publisherString) &&
+                TextUtils.isEmpty(quantityString) && TextUtils.isEmpty(publisherString) &&
                 TextUtils.isEmpty(phoneString) && mGenre == GENRE_NOT_DEFINED) {
             // on empty entry return to main
             return;
         }
 
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_BOOK_TITLE, titleString);
-        cv.put(COLUMN_AUTHOR, authorString);
-        cv.put(COLUMN_GENRE, mGenre);
-        cv.put(COLUMN_QUANTITY, quantity);
-        cv.put(COLUMN_PUBLISHER_NAME, publisherString);
-
-        long phone = Long.parseLong(phoneString);
-        cv.put(COLUMN_PUBLISHER_PHONE, phone);
-
-        // by default set price to 0 if not provided
-        double price = 00.00;
-        if (!TextUtils.isEmpty(priceString)) {
-            price = Double.parseDouble(priceString);
-        }
-        cv.put(COLUMN_PRICE, price);
-
-        if (mCurrentBookUri == null) {
-            Uri newUri = getContentResolver().insert(CONTENT_URI, cv);
-
-            if (newUri == null) {
-                Toast.makeText(this, "Error saving book", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Book saved", Toast.LENGTH_SHORT).show();
-            }
+        // validate all fields
+        if (TextUtils.isEmpty(titleString)) {
+            mandatoryFieldsToast();
+        } else if (TextUtils.isEmpty(authorString)) {
+            mandatoryFieldsToast();
+        } else if (TextUtils.isEmpty(priceString)) {
+            mandatoryFieldsToast();
+        } else if (TextUtils.isEmpty(quantityString)) {
+            mandatoryFieldsToast();
+        } else if (TextUtils.isEmpty(publisherString)) {
+            mandatoryFieldsToast();
+        } else if (TextUtils.isEmpty(phoneString)) {
+            mandatoryFieldsToast();
         } else {
-            int rowsUpdated = getContentResolver().update(mCurrentBookUri,
-                    cv, null, null);
-            if (rowsUpdated == 0) {
-                Toast.makeText(this, R.string.manage_act_update_entry_failed,
-                        Toast.LENGTH_SHORT).show();
+
+            ContentValues cv = new ContentValues();
+            cv.put(COLUMN_BOOK_TITLE, titleString);
+            cv.put(COLUMN_AUTHOR, authorString);
+            cv.put(COLUMN_GENRE, mGenre);
+            cv.put(COLUMN_PUBLISHER_NAME, publisherString);
+
+            // casted fields
+            double price = Double.parseDouble(priceString);
+            cv.put(COLUMN_PRICE, price);
+
+            int quantity = Integer.parseInt(quantityString);
+            cv.put(COLUMN_QUANTITY, quantity);
+
+            long phone = Long.parseLong(phoneString);
+            cv.put(COLUMN_PUBLISHER_PHONE, phone);
+
+            if (mCurrentBookUri == null) {
+                Uri newUri = getContentResolver().insert(CONTENT_URI, cv);
+
+                if (newUri == null) {
+                    Toast.makeText(this, "Error saving book", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Book saved", Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(this, R.string.manage_act_update_ok, Toast.LENGTH_SHORT).show();
+                int rowsUpdated = getContentResolver().update(mCurrentBookUri,
+                        cv, null, null);
+                if (rowsUpdated == 0) {
+                    Toast.makeText(this, R.string.manage_act_update_entry_failed,
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, R.string.manage_act_update_ok, Toast.LENGTH_SHORT).show();
+                }
             }
+            finish();
         }
     }
 
@@ -292,9 +320,7 @@ public class ManageInventoryActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_save:
-                containsMandatoryData();
                 saveBook();
-                finish();
                 return true;
             case R.id.menu_delete:
                 ReusableMethods.deleteConfirmationDialog(this, mCurrentBookUri);
@@ -318,22 +344,8 @@ public class ManageInventoryActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void containsMandatoryData() {
-        titleData = mEditTitle.getText().toString().trim();
-        authorData = mEditAuthor.getText().toString().trim();
-        priceData = mEditPrice.getRawText();
-        quantityData = mEditQuantity.getText().toString().trim();
-        publisherData = mEditPublisher.getText().toString().trim();
-        phoneData = mEditPhone.getRawText();
-
-        if (TextUtils.isEmpty(titleData) || TextUtils.isEmpty(authorData) || TextUtils.isEmpty(priceData) ||
-                TextUtils.isEmpty(quantityData) || TextUtils.isEmpty(publisherData) || TextUtils.isEmpty(phoneData)) {
-            mandatoryFieldsToast();
-        }
-    }
-
     public void mandatoryFieldsToast() {
-        Toast toast = Toast.makeText(ManageInventoryActivity.this, R.string.mandatory_fields_warning, Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(this, R.string.mandatory_fields_warning, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
         toast.show();
     }
