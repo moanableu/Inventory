@@ -186,10 +186,10 @@ public class ManageInventoryActivity extends AppCompatActivity
         mFabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String publisherPhone = String.format("tel:", mEditPhone.getText().toString());
-
                 Intent i = new Intent(Intent.ACTION_DIAL);
-                i.setData(Uri.parse(publisherPhone));
+                String phone = mEditPhone.getRawText();
+
+                i.setData(Uri.parse("tel:" + phone));
                 if (i.resolveActivity(getPackageManager()) != null) {
                     startActivity(i);
                 }
